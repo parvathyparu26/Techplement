@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="number"], input[type="checkbox"] {
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Password Generator</h1>
+        <label for="length">How many characters do you want in your password?</label><br>
+        <input type="number" id="length" min="8"><br>
+        <div>
+            <input type="checkbox" id="uppercase" checked>
+            <label for="uppercase">Include Uppercase Letters</label><br>
+            <input type="checkbox" id="lowercase" checked>
+            <label for="lowercase">Include Lowercase Letters</label><br>
+            <input type="checkbox" id="numbers" checked>
+            <label for="numbers">Include Numbers</label><br>
+            <input type="checkbox" id="symbols" checked>
+            <label for="symbols">Include Special Characters</label><br>
+        </div>
+        <button onclick="generatePassword()">Generate Password</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function generatePassword() {
+            let length = document.getElementById('length').value;
+            if (length < 8) {
+                alert('Your number should be at least 8.');
+                return;
+            }
+
+            let uppercase = document.getElementById('uppercase').checked;
+            let lowercase = document.getElementById('lowercase').checked;
+            let numbers = document.getElementById('numbers').checked;
+            let symbols = document.getElementById('symbols').checked;
+
+            const f1 = lowercase ? 'abcdefghijklmnopqrstuvwxyz'.split('') : [];
+            const f2 = uppercase ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('') : [];
+            const f3 = numbers ? '0123456789'.split('') : [];
+            const f4 = symbols ? '!@#$%^&*()_+[]{}|;:,.<>?'.split('') : [];
+
+            if (!f1.length && !f2.length && !f3.length && !f4.length) {
+                alert('Please select at least one character type.');
+                return;
+            }
+
+            function shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            shuffle(f1);
+            shuffle(f2);
+            shuffle(f3);
+            shuffle(f4);
+
+            let result = [];
+            let parts = [f1, f2, f3, f4];
+            let totalParts = parts.reduce((acc, part) => acc + part.length, 0);
+            parts = parts.filter(part => part.length > 0);
+
+            for (let i = 0; i < length; i++) {
+                let part = parts[i % parts.length];
+                result.push(part[Math.floor(Math.random() * part.length)]);
+            }
+
+            shuffle(result);
+            document.getElementById('result').textContent = 'Strong Password: ' + result.join('').slice(0, length);
+        }
+    </script>
+</body>
+</html>
